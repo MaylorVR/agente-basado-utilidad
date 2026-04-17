@@ -1,17 +1,18 @@
-﻿"""
-mi_agente.py â€” Agente basado en utilidad.
-â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
-â•‘  Agente que usa una funciÃ³n de utilidad      â•‘
-â•‘  para navegar de A hasta B en el grid.       â•‘
-â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+﻿# -*- coding: utf-8 -*-
+"""
+mi_agente.py – Agente basado en utilidad.
+╔═══════════════════════════════════════════════╗
+║  Agente que usa una función de utilidad       ║
+║  para navegar de A hasta B en el grid.        ║
+╚═══════════════════════════════════════════════╝
 
-FunciÃ³n de utilidad:
+Función de utilidad:
     U(celda) = -distancia_manhattan(celda, meta) - K * visitas(celda)
 
     Donde:
-    - distancia_manhattan: estimaciÃ³n de pasos restantes hasta B
-    - visitas: penalizaciÃ³n por celdas ya visitadas (evita ciclos)
-    - K: peso de penalizaciÃ³n por revisita (K=10)
+    - distancia_manhattan: estimación de pasos restantes hasta B
+    - visitas: penalización por celdas ya visitadas (evita ciclos)
+    - K: peso de penalización por revisita (K=10)
 
     Casos especiales:
     - Si la celda es 'meta': utilidad = +infinito
@@ -23,14 +24,14 @@ from entorno import Agente
 
 class MiAgente(Agente):
     """
-    Agente basado en utilidad para navegaciÃ³n en GridWorld.
+    Agente basado en utilidad para navegación en GridWorld.
 
-    Medida de utilidad: nÃºmero de pasos para llegar a la meta.
+    Medida de utilidad: número de pasos para llegar a la meta.
     El agente busca minimizar los pasos eligiendo siempre la celda
     vecina con mayor utilidad estimada.
     """
 
-    # Peso de penalizaciÃ³n por cada vez que se revisita una celda
+    # Peso de penalización por cada vez que se revisita una celda
     PENALIZACION_REVISITA = 10
 
     def __init__(self):
@@ -39,16 +40,16 @@ class MiAgente(Agente):
         self.pila_backtrack = []  # Pila de posiciones para retroceder
 
     def al_iniciar(self):
-        """Resetear la memoria al iniciar una nueva simulaciÃ³n."""
+        """Resetear la memoria al iniciar una nueva simulación."""
         self.visitadas = {}
         self.pila_backtrack = []
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    #  FunciÃ³n de utilidad
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # ─────────────────────────────────────────────
+    #  Función de utilidad
+    # ─────────────────────────────────────────────
 
     def _estimar_posicion_vecino(self, posicion, direccion):
-        """Calcula la posiciÃ³n de la celda vecina dada una direcciÃ³n."""
+        """Calcula la posición de la celda vecina dada una dirección."""
         fila, col = posicion
         deltas = {
             'arriba':    (-1,  0),
@@ -65,11 +66,11 @@ class MiAgente(Agente):
 
     def _estimar_meta(self, posicion, direccion_meta):
         """
-        Estima la posiciÃ³n de la meta usando la brÃºjula.
-        Usa la direcciÃ³n general para deducir hacia dÃ³nde estÃ¡ B.
-        Como la meta estÃ¡ en (filas-1, columnas-1) por defecto,
-        y la brÃºjula nos dice la direcciÃ³n relativa, podemos
-        inferir una posiciÃ³n objetivo lejana en esa direcciÃ³n.
+        Estima la posición de la meta usando la brújula.
+        Usa la dirección general para deducir hacia dónde está B.
+        Como la meta está en (filas-1, columnas-1) por defecto,
+        y la brújula nos dice la dirección relativa, podemos
+        inferir una posición objetivo lejana en esa dirección.
         """
         fila, col = posicion
         vert, horiz = direccion_meta
@@ -94,21 +95,21 @@ class MiAgente(Agente):
 
     def _calcular_utilidad(self, posicion, direccion, percepcion, meta_estimada):
         """
-        Calcula la utilidad de moverse en una direcciÃ³n dada.
+        Calcula la utilidad de moverse en una dirección dada.
 
-        Retorna un valor numÃ©rico donde mayor = mejor opciÃ³n.
+        Retorna un valor numérico donde mayor = mejor opción.
         """
         estado_celda = percepcion[direccion]
 
-        # Caso 1: La celda es la meta â†’ utilidad mÃ¡xima
+        # Caso 1: La celda es la meta → utilidad máxima
         if estado_celda == 'meta':
             return float('inf')
 
-        # Caso 2: Celda bloqueada (pared o borde) â†’ utilidad mÃ­nima
+        # Caso 2: Celda bloqueada (pared o borde) → utilidad mínima
         if estado_celda == 'pared' or estado_celda is None:
             return float('-inf')
 
-        # Caso 3: Celda libre â†’ calcular utilidad
+        # Caso 3: Celda libre → calcular utilidad
         pos_vecino = self._estimar_posicion_vecino(posicion, direccion)
         distancia = self._distancia_manhattan(pos_vecino, meta_estimada)
         visitas = self.visitadas.get(pos_vecino, 0)
@@ -118,16 +119,16 @@ class MiAgente(Agente):
 
         return utilidad
 
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    #  DecisiÃ³n del agente
-    # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # ─────────────────────────────────────────────
+    #  Decisión del agente
+    # ─────────────────────────────────────────────
 
     def decidir(self, percepcion):
         """
-        Decide la siguiente acciÃ³n maximizando la funciÃ³n de utilidad.
+        Decide la siguiente acción maximizando la función de utilidad.
 
-        ParÃ¡metros:
-            percepcion â€“ diccionario con lo que el agente puede ver
+        Parámetros:
+            percepcion – diccionario con lo que el agente puede ver
 
         Retorna:
             'arriba', 'abajo', 'izquierda' o 'derecha'
@@ -138,15 +139,15 @@ class MiAgente(Agente):
         # Registrar visita a la celda actual
         self.visitadas[posicion] = self.visitadas.get(posicion, 0) + 1
 
-        # Estimar posiciÃ³n de la meta
+        # Estimar posición de la meta
         meta_estimada = self._estimar_meta(posicion, direccion_meta)
 
-        # â”€â”€ Paso 1: Si algÃºn vecino es la meta, ir directamente â”€â”€
+        # ── Paso 1: Si algún vecino es la meta, ir directamente ──
         for direccion in self.ACCIONES:
             if percepcion[direccion] == 'meta':
                 return direccion
 
-        # â”€â”€ Paso 2: Calcular utilidad de cada acciÃ³n posible â”€â”€
+        # ── Paso 2: Calcular utilidad de cada acción posible ──
         utilidades = {}
         for direccion in self.ACCIONES:
             utilidad = self._calcular_utilidad(
@@ -154,24 +155,24 @@ class MiAgente(Agente):
             )
             utilidades[direccion] = utilidad
 
-        # â”€â”€ Paso 3: Elegir la acciÃ³n con mayor utilidad â”€â”€
+        # ── Paso 3: Elegir la acción con mayor utilidad ──
         mejor_accion = max(utilidades, key=utilidades.get)
         mejor_utilidad = utilidades[mejor_accion]
 
-        # â”€â”€ Paso 4: Si la mejor opciÃ³n es transitable, tomarla â”€â”€
+        # ── Paso 4: Si la mejor opción es transitable, tomarla ──
         if mejor_utilidad > float('-inf'):
             pos_destino = self._estimar_posicion_vecino(posicion, mejor_accion)
 
             # Gestionar pila de backtracking
             if self.visitadas.get(pos_destino, 0) == 0:
-                # Celda nueva: guardar posiciÃ³n actual para poder retroceder
+                # Celda nueva: guardar posición actual para poder retroceder
                 self.pila_backtrack.append(posicion)
 
             return mejor_accion
 
-        # â”€â”€ Paso 5: Backtracking â€” no hay movimientos viables â”€â”€
+        # ── Paso 5: Backtracking – no hay movimientos viables ──
         # Intentar retroceder por la pila (todas las celdas libres ya
-        # fueron visitadas muchas veces, pero alguna direcciÃ³n deberÃ­a
+        # fueron visitadas muchas veces, pero alguna dirección debería
         # ser transitable)
         if self.pila_backtrack:
             destino_retroceso = self.pila_backtrack.pop()
@@ -188,5 +189,5 @@ class MiAgente(Agente):
             elif df == 0 and dc == 1:
                 return 'derecha'
 
-        # Ãšltimo recurso: moverse hacia abajo
+        # Último recurso: moverse hacia abajo
         return 'abajo'
